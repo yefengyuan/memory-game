@@ -1,3 +1,4 @@
+'use strict';
 /*
  * 创建一个包含所有卡片的数组
  */
@@ -10,7 +11,7 @@
  */
 // 洗牌函数来自于 http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -96,12 +97,10 @@ function lockCard($card,openCard) {
 function removeCard($card,openCard) {
     $.each(openCard,function (i,data) {
         $card[data].className = 'card notm animated wobble';
-        (function (n) {
-            function f() {
-                n.className = 'card';
-            }
-            setTimeout(f,1000);
-        })($card[data])
+        $card[index].className += ' open show';
+        setTimeout(function() {
+            $card[data].className = 'card';
+          },1000);
     })
 }
 
@@ -119,7 +118,8 @@ function displayStar(counter) {
     return starnum;
 }
 
-function play($card) {
+const deck = document.getElementsByClassName("deck")[0];
+deck.addEventListener("click", function(e) {
     let openCard = []; 
     let matchlength = []; 
     let counter = 0; 
@@ -148,11 +148,13 @@ function play($card) {
         }
 
     })
-}
+})
 
 function restart(classname) {
     $(classname).bind("click",function () {
-        window.location = location
+        window.location = function(){
+            
+        }
     })
 }
 
