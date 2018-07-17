@@ -36,165 +36,110 @@ function shuffle(array) {
  *    + 如果所有卡都匹配，则显示带有最终分数的消息（将这个功能放在你从这个函数中调用的另一个函数中）
  */
 
-function addDOM($card,cards_all){
-    $card.each(function (i) {
-        $(this).find('.fa').addClass(cards_all[i]);
-    });
+function addDOM(a){
+    $(".deck li").each(function(n){
+        $(this).find(".fa").addClass(a[n])
+    })
 }
-
-function displaySymbol($card,index){
-    $card[index].className += ' open show';
+function displaySymbol(a){
+    $(".card")[a].className+=" open show"
 }
-
-function checkMatch(openCard,matchlength,counter,startnum,clearid,mydate,$card) {
-    let second;
-    let card1 = $card[openCard[0]].children[0].className;
-    let card2 = $card[openCard[1]].children[0].className;
-    if(card1 === card2){
-        lockCard($card,openCard);
-        matchlength.push(openCard[0]);
-        matchlength.push(openCard[1]);
-    }else {
-        removeCard($card,openCard);
-    }
-    if(matchlength.length === 16){
-        second = seconds(mydate);
-        addMessage(counter,startnum,second);
-        clearTimeout(clearid);
-    }
+function checkMatch(a,n,e,t,c,o){
+    var r,s=$(".card")[a[0]].children[0].className,
+    i=$(".card")[a[1]].children[0].className;
+    s==i?(lockCard(a),n.push(a[0]),n.push(a[1])):removeCard(a),
+    16===n.length&&(r=seconds(o),addMessage(e,t,r),clearTimeout(c))
 }
-
-function addMessage(counter,startnum,second) {
-    $('.container').remove();
-
-    let html = $('<div class="result"></div>');
-    let info1 = $('<p class="re-won">Congratulations! You Won!</p>');
-    let info2 = $('<p class="re-moves">With&nbsp;'+counter+'&nbsp;Moves&nbsp;&nbsp;,&nbsp;&nbsp;'+second+'&nbsp;seconds&nbsp;&nbsp;and&nbsp;&nbsp;'+startnum+'&nbsp;Stars. </p>');
-    let info3 = $('<p class="re-moves">Woooooo!</p>');
-    let button = $('<p class="re-button">Play again!</p>');
-    html.append(info1,info2,info3,button);
-    $(document.body).append(html);
-
-    restart('.re-button');
+function addMessage(a,n,e){
+    $(".container").remove();
+    var t=$('<div class="result"></div>'),
+    c=$('<p class="re-won">Congratulations! You Won!</p>'),
+    o=$('<p class="re-moves">With&nbsp;'+a+"&nbsp;Moves&nbsp;&nbsp;,&nbsp;&nbsp;"+e+"&nbsp;seconds&nbsp;&nbsp;and&nbsp;&nbsp;"+n+"&nbsp;Stars. </p>"),
+    r=$('<p class="re-moves">Woooooo!</p>'),
+    s=$('<p class="re-button">Play again!</p>');
+    t.append(c),t.append(o),t.append(r),t.append(s),
+    $(document.body).append(t),restart(".re-button")
 }
-
-function lockCard($card,openCard) {
-    let match = [];
-    $.each(openCard,function (i,data) {
-        $card[data].className = 'card match animated bounce';
-        match.push(data);
-    });
-    $.each($card,function (index) {
-        for(let j=0;j<match.length;j++) {
-            if(index == match[j]){
-                let cancel = $card[index];
-                $(cancel).unbind("click");
+function lockCard(a){
+    var n=[];
+    $.each(a,function(a,e){
+        $(".card")[e].className="card match animated bounce",
+        n.push(e)
+    }),
+        $.each($(".card"),
+        function(a){
+            for(var e=0;e<n.length;e++)
+            if(a==n[e]){var t=$(".card")[a];$(t).unbind("click")
+                }   
+        })
+}
+function removeCard(a){
+    $.each(a,function(a,n){
+        $(".card")[n].className="card notm animated wobble",
+        function(a){
+            function n(){
+                a.className="card"
             }
+            setTimeout(n,1500)
         }
+        ($(".card")[n])
     })
 }
-
-function removeCard($card,openCard) {
-    $.each(openCard,function (i,data) {
-        $card[data].className = 'card notm animated wobble';
-        $card[index].className += ' open show';
-        setTimeout(function() {
-            $card[data].className = 'card';
-          },1000);
+function displayNum(a){
+    $(".moves").text(""),
+    $(".moves").append(a)
+}
+function displayStar(a){
+    a>12&&a<=16?$(".stars>li:eq(2)").remove():a>16&&$(".stars>li:eq(1)").remove();
+    var n=$(".stars>li").length;return n
+}
+    
+function play(){
+    var a,n,e,t=[],c=[],o=0,r=!0;
+    $(".card").bind("click",function(){
+        if(r){
+            var s=new Date;e=s.getTime(),n=timer(0),r=!1
+        }
+        var i=$(".card").index(this);
+        t.push(i),
+        t[0]!=t[1]?displaySymbol(i):t.pop(),
+        2===t.length&&(o+=1,displayNum(o),a=displayStar(o),checkMatch(t,c,o,a,n,e),t.splice(0,t.length)
+        )
     })
 }
-
-function displayNum(counter) {
-    $('.moves').text("").append(counter);
-}
-
-function displayStar(counter) {
-    if(counter>12 && counter<=16){
-        $('.stars>li:eq(2)').remove();
-    }else if(counter>16){
-        $('.stars>li:eq(1)').remove();
-    }
-    let starnum = $(".stars>li").length;
-    return starnum;
-}
-
-const deck = document.getElementsByClassName("deck")[0];
-deck.addEventListener("click", function(e) {
-    let openCard = []; 
-    let matchlength = []; 
-    let counter = 0; 
-    let startnum, clearid, mydate;
-    let time = true;
-    $card.bind("click",function () {
-        if(time){
-            let beDate = new Date();
-            mydate = beDate.getTime();
-            clearid=timer(0);
-            time = false;
-        }
-        let n = $card.index(this);
-        openCard.push(n);
-        if (openCard[0]!=openCard[1]) {
-            displaySymbol($card,n);
-        }else {
-            openCard.pop();
-        }
-        if(openCard.length === 2){
-            counter += 1;
-            displayNum(counter);
-            startnum = displayStar(counter);
-            checkMatch(openCard,matchlength,counter,startnum,clearid,mydate,$card);
-            openCard.splice(0,openCard.length);
-        }
-
-    })
-})
-
-function restart(classname) {
-    $(classname).bind("click",function () {
-        window.location = function(){
-            
-        }
+function restart(a){
+    $(a).bind("click",function(){
+        window.location.reload()
     })
 }
-
-function interval(func, wait) {
-    let id;
-    let interv = function () {
-        func.call(null);
-        id = setTimeout(interv, wait);
+function interval(a,n){
+    var e,t=function(){
+        a.call(null),e=setTimeout(t,n)
     };
-    id = setTimeout(interv ,wait);
-    return id;
+    return e=setTimeout(t,n)
 }
-
-function timer(i) {
-    return interval(function () {
-        i=i+1;
-        $('.time span').text("").append(i);
-    }, 1000);
+function timer(a){
+    var n=interval(function(){
+        a++,$(".time span").text("").append(a)}, 1e3);
+    return n
 }
-
-function seconds(bsDate) {
-    let date = new Date();
-    let second = Math.floor((date.getTime() - bsDate)/1000);
-    return second;
+function seconds(a){
+    var n=new Date,e=Math.floor((n.getTime()-a)/1e3);
+    return e
 }
-
-$(document).ready(function () {
-    let cards_all = [
-        'fa-diamond','fa-diamond',
-        'fa-paper-plane-o','fa-paper-plane-o',
-        'fa-anchor','fa-anchor',
-        'fa-bolt','fa-bolt',
-        'fa-cube','fa-cube',
-        'fa-leaf','fa-leaf',
-        'fa-bicycle','fa-bicycle',
-        'fa-bomb','fa-bomb'
+$(document).ready(function(){
+    var a=[
+        "fa-diamond","fa-diamond",
+        "fa-paper-plane-o","fa-paper-plane-o",
+        "fa-anchor","fa-anchor",
+        "fa-bolt","fa-bolt",
+        "fa-cube","fa-cube",
+        "fa-leaf","fa-leaf",
+        "fa-bicycle","fa-bicycle",
+        "fa-bomb","fa-bomb"
     ];
-    cards_all = shuffle(cards_all);
-    let $card = $('.card');
-    addDOM($card,cards_all);
-    play($card);
-    restart('.restart');
+    a=shuffle(a),
+    addDOM(a),
+    play(),
+    restart(".restart")
 });
