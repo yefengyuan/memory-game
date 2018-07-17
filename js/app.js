@@ -143,4 +143,3 @@ $(document).ready(function(){
     play(),
     restart(".restart")
 });
-
